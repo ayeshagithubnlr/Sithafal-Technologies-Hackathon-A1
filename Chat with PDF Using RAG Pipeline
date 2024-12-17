@@ -1,0 +1,50 @@
+from sklearn.feature_extraction.text import TfidfVectorizer
+import numpy as np
+
+# Sample text data (you can replace this with actual chunks or documents you want to process)
+texts = [
+    "This is a sample text for embedding",
+    "Another example text for testing embeddings",
+    "Here is a third example of text data for creating embeddings",
+    "This is the last text to test the embedding mechanism"
+]
+
+# Step 1: Create a TF-IDF Vectorizer (this generates embeddings based on term frequency and inverse document frequency)
+vectorizer = TfidfVectorizer()
+
+# Step 2: Fit and transform the text data to create TF-IDF embeddings
+tfidf_matrix = vectorizer.fit_transform(texts)
+
+# Step 3: Convert the sparse matrix to a dense array
+embedding_array = tfidf_matrix.toarray()
+
+# Step 4: Simulate storing embeddings (In real case, we would use FAISS or another vector search system)
+print("Generated Embeddings (TF-IDF):")
+for i, embedding in enumerate(embedding_array):
+    print(f"Text {i+1}: {embedding}")
+
+# Step 5: Simple example of similarity search (Cosine Similarity)
+from sklearn.metrics.pairwise import cosine_similarity
+
+# Example: Calculate cosine similarity between the first text and the rest
+cosine_sim = cosine_similarity([embedding_array[0]], embedding_array[1:])
+
+print("\nCosine Similarity (Text 1 vs Others):")
+for i, score in enumerate(cosine_sim[0]):
+    print(f"Similarity between Text 1 and Text {i+2}: {score:.4f}")
+
+# Step 6: Store the embeddings in a simulated vector store (using FAISS-like logic)
+# In this case, we simply simulate this by storing the embeddings in a list
+vector_store = [embedding for embedding in embedding_array]
+
+# Step 7: Search simulation (Find the closest match to a query)
+query_text = "text for embedding"
+query_vector = vectorizer.transform([query_text]).toarray()
+
+# Find the closest document using cosine similarity
+query_sim = cosine_similarity(query_vector, vector_store)
+
+# Print the closest match
+closest_match_idx = np.argmax(query_sim)
+print(f"\nClosest match to the query '{query_text}': Text {closest_match_idx+1}")
+print(f"Similarity score: {query_sim[0][closest_match_idx]:.4f}")
